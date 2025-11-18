@@ -15,23 +15,19 @@
 - ✅ System prompt implemented for car expert behavior
 - ✅ Error handling with retry logic (3 attempts)
 - ✅ Proper error messages for different scenarios
+- ✅ Rate limiting implemented (5 calls/min, 20 calls/hr per IP)
+- ✅ Daily cost cap tracking ($1/day limit)
+- ✅ Honeypot field for bot protection
 
 ## Next Steps (Priority Order)
 
-### 1. Rate Limiting & Bot Protection
-- Implement IP-based rate limiting (5 calls/min, 20 calls/hr)
-- Add request counting and throttling
-- Daily cost cap monitoring ($1/day limit)
-- Consider implementing honeypot field
-- Add Cloudflare Turnstile or similar bot protection
-
-### 2. SEO Content
+### 1. SEO Content
 - Create /blog or /articles route structure
 - Write 10 SEO-optimized articles (see requirements)
 - Each 1500-2000 words with proper H2/H3 structure
 - Add FAQ sections and internal linking
 
-### 3. Nice-to-Haves
+### 2. Nice-to-Haves
 - Dark mode toggle
 - Share conversation link
 - 'Was this helpful?' feedback buttons
@@ -59,13 +55,23 @@
 /app
   /api
     /chat
-      - route.ts (OpenAI API integration)
+      - route.ts (OpenAI API integration + rate limiting)
   /components
     - ChatBubble.tsx
-    - ChatInterface.tsx
+    - ChatInterface.tsx (includes honeypot field)
+  /utils
+    - rateLimiter.ts (IP-based rate limiting)
   - page.tsx (main entry, handles view switching)
   - types.ts (TypeScript interfaces)
 ```
+
+### Rate Limiting Implementation:
+- Created rateLimiter.ts utility with in-memory tracking
+- Tracks requests per IP address
+- Enforces 5 requests/minute and 20 requests/hour limits
+- Daily cost cap of $1 (approx 500 requests at $0.002 per request)
+- Honeypot field added to prevent bot submissions
+- IP extracted from x-forwarded-for or x-real-ip headers
 
 ## Testing Commands
 ```bash
@@ -77,7 +83,11 @@ npm run lint     # Run linting
 ## Notes for Next Developer
 - OpenAI integration is complete and working
 - API key must be set in .env.local for the chat to work
+- Rate limiting is now implemented and active
+- ESLint needs to be configured (run `npm run lint` and choose Strict)
 - Consider implementing streaming responses for better UX
-- Rate limiting is critical before production deployment
+- Consider adding Cloudflare Turnstile for additional bot protection
 - May want to add conversation length limits (max messages)
 - Current token limit is 1000 per response - adjust if needed
+- Rate limiter uses in-memory storage - consider Redis for production
+- Cost tracking is approximate ($0.002 per request estimated)
