@@ -157,6 +157,36 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
     onClearChat();
   };
 
+  const handleFeedback = (messageId: string, feedback: 'helpful' | 'not-helpful') => {
+    const updatedMessages = messages.map(msg => {
+      if (msg.id === messageId) {
+        return {
+          ...msg,
+          feedback: msg.feedback === feedback ? null : feedback
+        };
+      }
+      return msg;
+    });
+    
+    setMessages(updatedMessages);
+    localStorage.setItem('carMatchConversation', JSON.stringify(updatedMessages));
+    
+    // Send feedback to API (fire and forget)
+    fetch('/api/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messageId,
+        feedback,
+        content: messages.find(m => m.id === messageId)?.content || ''
+      }),
+    }).catch(error => {
+      console.error('Failed to send feedback:', error);
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
       <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-10">
@@ -174,7 +204,11 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-4 py-6">
           {messages.map((message) => (
-            <ChatBubble key={message.id} message={message} />
+            <ChatBubble
+              key={message.id}
+              message={message}
+              onFeedback={handleFeedback}
+            />
           ))}
           {isLoading && (
             <div className="flex justify-start mb-4">

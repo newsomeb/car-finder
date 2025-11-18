@@ -22,12 +22,12 @@
 - ✅ Blog index page listing all 10 planned articles
 - ✅ All 10 SEO articles completed
 - ✅ Dark mode toggle implemented with system preference detection
+- ✅ 'Was this helpful?' feedback buttons implemented
 
 ## Next Steps (Priority Order)
 
 ### Nice-to-Haves
 - Share conversation link
-- 'Was this helpful?' feedback buttons
 - Simple admin dashboard for usage stats
 
 ## Technical Implementation Details
@@ -55,12 +55,23 @@
 - Smooth transitions between light and dark modes
 - All components updated with dark mode Tailwind classes
 
+### Feedback Feature Implementation:
+- Added feedback property to Message type (helpful/not-helpful/null)
+- ChatBubble now displays thumbs up/down buttons for AI responses
+- Feedback persists in localStorage with conversation
+- Created /app/api/feedback/route.ts endpoint to log feedback
+- Feedback data includes messageId, feedback type, content snippet, timestamp, and IP
+- Feedback.log added to .gitignore
+- Toggle functionality: clicking same button removes feedback
+
 ### File Structure:
 ```
 /app
   /api
     /chat
       - route.ts (OpenAI API integration + rate limiting)
+    /feedback
+      - route.ts (Feedback logging API)
   /blog
     - layout.tsx (blog layout with navigation + dark mode)
     - page.tsx (blog index listing all articles)
@@ -85,8 +96,8 @@
     /used-car-red-flags
       - page.tsx (completed SEO article)
   /components
-    - ChatBubble.tsx (dark mode support)
-    - ChatInterface.tsx (includes honeypot field + dark mode)
+    - ChatBubble.tsx (dark mode + feedback buttons)
+    - ChatInterface.tsx (includes honeypot field + dark mode + feedback handler)
     - ThemeProvider.tsx (dark mode context)
     - ThemeToggle.tsx (toggle button component)
   /utils
@@ -130,3 +141,5 @@ npm run lint     # Run linting
 - Current token limit is 1000 per response - adjust if needed
 - Rate limiter uses in-memory storage - consider Redis for production
 - Cost tracking is approximate ($0.002 per request estimated)
+- Feedback is currently logged to feedback.log file - consider database for production
+- Feedback buttons appear below every AI response and persist state
