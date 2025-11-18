@@ -13,6 +13,7 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -43,7 +44,7 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: [userMessage] }),
+        body: JSON.stringify({ messages: [userMessage], honeypot: '' }),
       })
         .then(response => response.json())
         .then(data => {
@@ -100,7 +101,7 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ messages: updatedMessages }),
+          body: JSON.stringify({ messages: updatedMessages, honeypot }),
         });
 
         if (!response.ok) {
@@ -193,6 +194,16 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
       <div className="border-t border-gray-200 bg-white sticky bottom-0">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <form onSubmit={handleSubmit} className="flex gap-3">
+            {/* Honeypot field - hidden from users */}
+            <input
+              type="text"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px' }}
+              aria-hidden="true"
+            />
             <input
               type="text"
               value={inputValue}
