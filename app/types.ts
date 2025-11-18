@@ -3,6 +3,7 @@ export interface Message {
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
+  feedback?: 'helpful' | 'not-helpful' | null;
 }
 
 export interface Conversation {
