@@ -134,9 +134,67 @@ class RateLimiter {
       hour: Math.max(0, hourRemaining)
     };
   }
+
+  getStats(): {
+    totalRequests: number;
+    dailyCost: number;
+    costLimit: number;
+    activeIPs: number;
+    ipDetails: Array<{
+      ip: string;
+      minuteCount: number;
+      hourCount: number;
+      minuteRemaining: number;
+      hourRemaining: number;
+    }>;
+  } {
+    const now = Date.now();
+    const minuteWindow = 60 * 1000;
+    const hourWindow = 60 * 60 * 1000;
+    
+    let totalRequests = 0;
+    const ipDetails: Array<{
+      ip: string;
+      minuteCount: number;
+      hourCount: number;
+      minuteRemaining: number;
+      hourRemaining: number;
+    }> = [];
+
+    this.requestRecords.forEach((record, ip) => {
+      const activeMinuteCount = now - record.minuteWindowStart > minuteWindow ? 0 : record.minuteCount;
+      const activeHourCount = now - record.hourWindowStart > hourWindow ? 0 : record.hourCount;
+      
+      totalRequests += activeHourCount;
+      
+      ipDetails.push({
+        ip,
+        minuteCount: activeMinuteCount,
+        hourCount: activeHourCount,
+        minuteRemaining: Math.max(0, this.MINUTE_LIMIT - activeMinuteCount),
+        hourRemaining: Math.max(0, this.HOUR_LIMIT - activeHourCount)
+      });
+    });
+
+    // Sort by hour count descending
+    ipDetails.sort((a, b) => b.hourCount - a.hourCount);
+
+    return {
+      totalRequests,
+      dailyCost: this.costTracking.dailyCost,
+      costLimit: this.DAILY_COST_LIMIT,
+      activeIPs: ipDetails.length,
+      ipDetails: ipDetails.slice(0, 20) // Top 20 IPs
+    };
+  }
 }
 
 // Create a singleton instance
 const rateLimiter = new RateLimiter();
+
+// Export function for admin stats
+export function getRateLimiterStats() {
+  return rateLimiter.getStats();
+}
 
 export { rateLimiter };
