@@ -35,3 +35,6 @@ yarn-error.log*
 
 # logs
 feedback.log
+
+# shares data
+.shares.json

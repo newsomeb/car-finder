@@ -14,6 +14,7 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  const [shareStatus, setShareStatus] = useState<'idle' | 'sharing' | 'shared' | 'error'>('idle');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -187,17 +188,72 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
     });
   };
 
+  const handleShare = async () => {
+    if (messages.length === 0) {
+      return;
+    }
+
+    setShareStatus('sharing');
+
+    try {
+      const response = await fetch('/api/share/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to share conversation');
+      }
+
+      const data = await response.json();
+      const shareUrl = `${window.location.origin}${data.shareUrl}`;
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+      setShareStatus('shared');
+
+      // Reset status after 3 seconds
+      setTimeout(() => {
+        setShareStatus('idle');
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error sharing conversation:', error);
+      setShareStatus('error');
+      setTimeout(() => {
+        setShareStatus('idle');
+      }, 3000);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
       <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">CarMatch AI</h1>
-          <button
-            onClick={handleClearChat}
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          >
-            Clear conversation
-          </button>
+          <div className="flex gap-2">
+            {messages.length > 0 && (
+              <button
+                onClick={handleShare}
+                disabled={shareStatus === 'sharing'}
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+              >
+                {shareStatus === 'sharing' && 'Sharing...'}
+                {shareStatus === 'shared' && '✓ Link copied!'}
+                {shareStatus === 'error' && 'Failed to share'}
+                {shareStatus === 'idle' && 'Share'}
+              </button>
+            )}
+            <button
+              onClick={handleClearChat}
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              Clear conversation
+            </button>
+          </div>
         </div>
       </div>
 
