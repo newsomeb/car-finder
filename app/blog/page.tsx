@@ -84,27 +84,27 @@ const blogPosts: BlogPost[] = [
 export default function BlogPage() {
   return (
     <div>
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">
+      <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
         Car Buying Guides & Reviews
       </h1>
-      <p className="text-xl text-gray-600 mb-12">
+      <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
         Expert advice to help you find the perfect car for your needs and budget
       </p>
       
       <div className="space-y-8">
         {blogPosts.map((post) => (
-          <article key={post.slug} className="border-b border-gray-200 pb-8">
+          <article key={post.slug} className="border-b border-gray-200 dark:border-gray-700 pb-8">
             <Link 
               href={`/blog/${post.slug}`}
               className="group block hover:no-underline"
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {post.title}
               </h2>
-              <p className="text-gray-600 mb-3">
+              <p className="text-gray-600 dark:text-gray-400 mb-3">
                 {post.description}
               </p>
-              <div className="flex items-center text-sm text-gray-500">
+              <div className="flex items-center text-sm text-gray-500 dark:text-gray-500">
                 <time dateTime={post.date}>
                   {new Date(post.date).toLocaleDateString('en-US', {
                     year: 'numeric',

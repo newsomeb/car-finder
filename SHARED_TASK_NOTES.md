@@ -21,11 +21,11 @@
 - ✅ Blog structure created at /app/blog with layout
 - ✅ Blog index page listing all 10 planned articles
 - ✅ All 10 SEO articles completed
+- ✅ Dark mode toggle implemented with system preference detection
 
 ## Next Steps (Priority Order)
 
 ### Nice-to-Haves
-- Dark mode toggle
 - Share conversation link
 - 'Was this helpful?' feedback buttons
 - Simple admin dashboard for usage stats
@@ -47,6 +47,14 @@
 3. Run `npm run dev`
 4. Visit http://localhost:3000
 
+### Dark Mode Implementation:
+- Created ThemeProvider.tsx using React Context for state management
+- Theme preference persists in localStorage
+- Automatically detects system preference on first visit
+- Toggle button fixed in top-right corner with sun/moon icons
+- Smooth transitions between light and dark modes
+- All components updated with dark mode Tailwind classes
+
 ### File Structure:
 ```
 /app
@@ -54,7 +62,7 @@
     /chat
       - route.ts (OpenAI API integration + rate limiting)
   /blog
-    - layout.tsx (blog layout with navigation)
+    - layout.tsx (blog layout with navigation + dark mode)
     - page.tsx (blog index listing all articles)
     /best-awd-suv-snow-under-20k
       - page.tsx (completed SEO article)
@@ -77,11 +85,14 @@
     /used-car-red-flags
       - page.tsx (completed SEO article)
   /components
-    - ChatBubble.tsx
-    - ChatInterface.tsx (includes honeypot field)
+    - ChatBubble.tsx (dark mode support)
+    - ChatInterface.tsx (includes honeypot field + dark mode)
+    - ThemeProvider.tsx (dark mode context)
+    - ThemeToggle.tsx (toggle button component)
   /utils
     - rateLimiter.ts (IP-based rate limiting)
-  - page.tsx (main entry, handles view switching)
+  - page.tsx (main entry, handles view switching + dark mode)
+  - layout.tsx (root layout with ThemeProvider)
   - types.ts (TypeScript interfaces)
 ```
 
@@ -110,6 +121,9 @@ npm run lint     # Run linting
 - Articles are 1500-2000 words each with FAQ sections and internal links
 - Each article has its own directory under /app/blog/[slug]/page.tsx
 - All articles include CTA to main CarMatch AI tool and related article links
+- Dark mode is fully implemented with toggle button and localStorage persistence
+- Dark mode automatically detects system preference on first visit
+- All blog articles still need dark mode classes added (only index/layout updated)
 - Consider implementing streaming responses for better UX
 - Consider adding Cloudflare Turnstile for additional bot protection
 - May want to add conversation length limits (max messages)

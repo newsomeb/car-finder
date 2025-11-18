@@ -53,11 +53,11 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-4xl mx-auto">
         <div className="flex flex-col items-center space-y-6">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-800 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 text-center">
             Find the perfect car
           </h1>
           
-          <p className="text-lg text-gray-600 text-center">
+          <p className="text-lg text-gray-600 dark:text-gray-400 text-center">
             Instant AI recommendations tailored to your life.
           </p>
 
@@ -68,16 +68,16 @@ export default function Home() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="What kind of car are you looking for?"
-                className="w-full px-6 py-4 text-lg border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:shadow-md transition-shadow"
+                className="w-full px-6 py-4 text-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:shadow-md transition-shadow"
                 autoFocus
               />
               <button
                 type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
                 aria-label="Search"
               >
                 <svg
-                  className="w-5 h-5 text-gray-600"
+                  className="w-5 h-5 text-gray-600 dark:text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -100,7 +100,7 @@ export default function Home() {
                 <button
                   key={index}
                   onClick={() => handleSuggestedSearch(suggestion)}
-                  className="text-sm text-gray-600 bg-gray-50 hover:bg-gray-100 px-4 py-2 rounded-full transition-colors text-center"
+                  className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-full transition-colors text-center"
                 >
                   {suggestion}
                 </button>
@@ -109,12 +109,12 @@ export default function Home() {
           </div>
 
           <div className="mt-16 w-full max-w-2xl px-4">
-            <p className="text-xs text-gray-500 text-center mb-3">
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-3">
               Or try this detailed example:
             </p>
             <button
               onClick={() => handleSuggestedSearch(detailedExample)}
-              className="text-xs text-gray-500 hover:text-gray-700 text-left bg-gray-50 hover:bg-gray-100 p-4 rounded-lg transition-colors w-full"
+              className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-left bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-lg transition-colors w-full"
             >
               {detailedExample}
             </button>
