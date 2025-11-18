@@ -36,18 +36,42 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
       };
       setMessages([userMessage]);
       localStorage.setItem('carMatchConversation', JSON.stringify([userMessage]));
+      setIsLoading(true);
       
-      setTimeout(() => {
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: "I'd be happy to help you find the perfect car! To give you the best recommendations, could you tell me a bit more about:\n\n1. What's your budget?\n2. Where are you located?\n3. What will you mainly use the car for?\n4. Any must-have features?\n\nThis will help me suggest specific models that match your needs.",
-          role: 'assistant',
-          timestamp: new Date(),
-        };
-        const newMessages = [userMessage, aiMessage];
-        setMessages(newMessages);
-        localStorage.setItem('carMatchConversation', JSON.stringify(newMessages));
-      }, 1000);
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: [userMessage] }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          const aiMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            content: data.content || "I'd be happy to help you find the perfect car! To give you the best recommendations, could you tell me a bit more about:\n\n1. What's your budget?\n2. Where are you located?\n3. What will you mainly use the car for?\n4. Any must-have features?\n\nThis will help me suggest specific models that match your needs.",
+            role: 'assistant',
+            timestamp: new Date(),
+          };
+          const newMessages = [userMessage, aiMessage];
+          setMessages(newMessages);
+          localStorage.setItem('carMatchConversation', JSON.stringify(newMessages));
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const errorMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            content: "It looks like the OpenAI API key isn't configured yet. Please add your OPENAI_API_KEY to the .env.local file.",
+            role: 'assistant',
+            timestamp: new Date(),
+          };
+          const newMessages = [userMessage, errorMessage];
+          setMessages(newMessages);
+          localStorage.setItem('carMatchConversation', JSON.stringify(newMessages));
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [initialQuery]);
 
@@ -68,18 +92,62 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
     setIsLoading(true);
     localStorage.setItem('carMatchConversation', JSON.stringify(updatedMessages));
 
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: "I'm currently in development mode. The OpenAI integration will be added soon! For now, I can show you that your message was received: \"" + inputValue + "\"",
-        role: 'assistant',
-        timestamp: new Date(),
-      };
-      const newMessages = [...updatedMessages, aiMessage];
-      setMessages(newMessages);
-      localStorage.setItem('carMatchConversation', JSON.stringify(newMessages));
-      setIsLoading(false);
-    }, 1000);
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ messages: updatedMessages }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to get response');
+        }
+
+        const data = await response.json();
+        
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: data.content,
+          role: 'assistant',
+          timestamp: new Date(),
+        };
+        
+        const newMessages = [...updatedMessages, aiMessage];
+        setMessages(newMessages);
+        localStorage.setItem('carMatchConversation', JSON.stringify(newMessages));
+        break;
+      } catch (error: any) {
+        retries--;
+        
+        if (retries === 0) {
+          console.error('Error:', error);
+          const errorMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            content: error.message === 'Invalid API key configuration.' 
+              ? "It looks like the OpenAI API key isn't configured yet. Please add your OPENAI_API_KEY to the .env.local file."
+              : error.message === 'Too many requests. Please try again later.'
+              ? "You're making requests too quickly. Please wait a moment and try again."
+              : `Sorry, I encountered an error: ${error.message}. Please try again.`,
+            role: 'assistant',
+            timestamp: new Date(),
+          };
+          const newMessages = [...updatedMessages, errorMessage];
+          setMessages(newMessages);
+          localStorage.setItem('carMatchConversation', JSON.stringify(newMessages));
+        } else if (error.message !== 'Invalid API key configuration.') {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } else {
+          break;
+        }
+      }
+    }
+    
+    setIsLoading(false);
   };
 
   const handleClearChat = () => {
