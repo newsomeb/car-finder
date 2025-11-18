@@ -158,13 +158,13 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-800">CarMatch AI</h1>
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">CarMatch AI</h1>
           <button
             onClick={handleClearChat}
-            className="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             Clear conversation
           </button>
@@ -178,11 +178,11 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
           ))}
           {isLoading && (
             <div className="flex justify-start mb-4">
-              <div className="bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl">
+              <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-4 py-3 rounded-2xl">
                 <div className="flex space-x-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
@@ -191,7 +191,7 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
         </div>
       </div>
 
-      <div className="border-t border-gray-200 bg-white sticky bottom-0">
+      <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky bottom-0">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <form onSubmit={handleSubmit} className="flex gap-3">
             {/* Honeypot field - hidden from users */}
@@ -209,13 +209,13 @@ export function ChatInterface({ initialQuery, onClearChat }: ChatInterfaceProps)
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Ask about specific cars, features, or describe your needs..."
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={!inputValue.trim() || isLoading}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-3 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
             >
               Send
             </button>

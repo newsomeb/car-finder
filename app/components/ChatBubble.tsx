@@ -14,8 +14,8 @@ export function ChatBubble({ message }: ChatBubbleProps) {
       <div
         className={`max-w-[70%] px-4 py-3 rounded-2xl ${
           isUser
-            ? 'bg-blue-500 text-white ml-auto'
-            : 'bg-gray-100 text-gray-800'
+            ? 'bg-blue-500 dark:bg-blue-600 text-white ml-auto'
+            : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
         }`}
       >
         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
