@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ChatInterface } from "./components/ChatInterface";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showChat, setShowChat] = useState(false);
+  const [activeQuery, setActiveQuery] = useState("");
 
   const suggestedSearches = [
     "Reliable SUV under $15k",
@@ -16,16 +19,35 @@ export default function Home() {
 
   const detailedExample = "I'm a 32-year-old software engineer in Seattle. I bike to work but need a car for weekend camping trips in the Cascades (lots of dirt roads). Budget is $18k max. I'm 6'3\" so I need headroom. I hate sedans. I want something that looks cool but isn't flashy. Good speakers are a must because I listen to podcasts. I had a Honda Civic that was boring as hell. I like the idea of Subarus but everyone in Seattle has one and I don't want to be basic. Also I have a dog (golden retriever) so I need space for him and camping gear. Heated seats would be nice because it's cold here. I don't care about 0-60 times but I do care about reliability because I'm terrible at remembering to do maintenance. What should I get?";
 
+  useEffect(() => {
+    const savedConversation = localStorage.getItem('carMatchConversation');
+    if (savedConversation) {
+      setShowChat(true);
+    }
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      console.log("Search query:", searchQuery);
+      setActiveQuery(searchQuery);
+      setShowChat(true);
     }
   };
 
   const handleSuggestedSearch = (suggestion: string) => {
-    setSearchQuery(suggestion);
+    setActiveQuery(suggestion);
+    setShowChat(true);
   };
+
+  const handleClearChat = () => {
+    setShowChat(false);
+    setSearchQuery("");
+    setActiveQuery("");
+  };
+
+  if (showChat) {
+    return <ChatInterface initialQuery={activeQuery} onClearChat={handleClearChat} />;
+  }
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4">
